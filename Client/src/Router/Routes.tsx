@@ -5,6 +5,8 @@ import AboutPage from "../Pages/AboutPage";
 import ContactPage from "../Pages/ContactPage";
 import CatalogPage from "../Pages/Catalog/CatalagPage";
 import ProductDetailsPage from "../Pages/Catalog/ProductDetails";
+import ErrorPage from "../Pages/ErrorPage";
+import ServerError from "../errors/ServerError";
 
 export const  router = createBrowserRouter([
     {
@@ -15,6 +17,8 @@ export const  router = createBrowserRouter([
             {path: "about", element: <AboutPage/>},
             {path: "contact", element: <ContactPage/>},
             {path: "catalog", element: <CatalogPage/>},
+            {path: "error", element: <ErrorPage/>},
+            {path: "server-error", element: <ServerError/>},
             {path: "catalog/:id", element: <ProductDetailsPage/>}
         ]
     }
