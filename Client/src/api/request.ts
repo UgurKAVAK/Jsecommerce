@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { router } from "../Router/Routes";
 
 axios.defaults.baseURL ="http://localhost:5206/api/";
+axios.defaults.withCredentials = true;
 
 axios.interceptors.response.use(response => {
     return response;
@@ -56,8 +57,14 @@ const Catalog = {
     details: (id: number) => queries.get(`product/${id}`)
 }
 
+const Card = {
+    get: () => queries.get("Card"),
+    addItem: (productId: number, quantity = 1) => queries.post(`Card?productId=${productId}&quantity=${quantity}`, {}),
+    deleteItem: (productId: number, quantity = 1) => queries.delete(`Card?productId=${productId}&quantity=${quantity}`)
+}
+
 const request = {
-    Catalog, Errors
+    Catalog, Errors, Card
 }
 
 export default request
