@@ -5,16 +5,17 @@ import { Outlet } from "react-router";
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import request from "../api/request";
-import { useCardContext } from "../context/CardContext";
+import { useAppDispatch } from "../Hooks/Hooks";
+import { setCard } from "../Features/Card/CardSlice";
 
 function App() {
 
-  const {setCard} = useCardContext();
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     request.Card.get()
-    .then(card => setCard(card))
+    .then(card => dispatch(setCard(card)))
     .catch(error => console.log(error))
     .finally(() => setLoading(false))
   }, []);

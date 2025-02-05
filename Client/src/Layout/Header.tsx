@@ -1,7 +1,7 @@
 import { ShoppingCart } from "@mui/icons-material";
 import { AppBar, Badge, Box, Button, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import { Link, NavLink } from "react-router";
-import { useCardContext } from "../context/CardContext";
+import { useAppSelector } from "../Hooks/Hooks";
 
 const links=[
   {title: "Home", to: "/"},
@@ -23,7 +23,7 @@ const navStyles = {
 }
 
 export default function Header(){
-  const {card} = useCardContext();
+  const {card} = useAppSelector(state => state.card);
   const itemCount = card?.cardItems.reduce((total, item) => total + item.quantity, 0);
     return(
       <AppBar position="static" sx={{mb:4}}>

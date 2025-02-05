@@ -1,35 +1,19 @@
 import { Alert, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { Delete } from "@mui/icons-material";
-import { useCardContext } from "../../context/CardContext";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { LoadingButton } from "@mui/lab";
-import { useState } from "react";
-import request from "../../api/request";
 import { toast } from "react-toastify";
 import CardSummary from "./CardSummary";
 import { currenyTRY } from "../../utils/FormatCurrency";
+import { useAppDispatch, useAppSelector } from "../../Hooks/Hooks";
+import { addItemToCard, deleteItemFromCard } from "./CardSlice";
 
 export default function ShoppingCardPage(){
     
-    const {card, setCard} = useCardContext();
-    const [status, setStatus] = useState({loading: false, id: ""});
+    const {card, status} = useAppSelector(state => state.card);
+    const dispatch = useAppDispatch();
     
-    function handleAddItem(productId: number, id: string){
-      setStatus({loading: true, id:id});
-      request.Card.addItem(productId)
-      .then(card => setCard(card))
-      .catch(error => console.log(error))
-      .finally(() => setStatus({loading: false, id: ""}));
-    }
-    function handleDeleteItem(productId: number, id: string, quantity = 1){
-      setStatus({loading: true, id:id});
-      request.Card.deleteItem(productId,quantity)
-      .then((card) => setCard(card))
-      .catch(error => console.log(error))
-      .finally(() => setStatus({loading: false, id: ""}));
-    }
-
     if(card?.cardItems.length === 0) return <Alert severity="warning">Sepetinizde Ürün Yoktur.</Alert>
 
     return (
@@ -59,17 +43,17 @@ export default function ShoppingCardPage(){
                   </TableCell>
                   <TableCell align="right">{currenyTRY.format(item.price)}</TableCell>
                   <TableCell align="right">
-                    <LoadingButton loading={status.loading && status.id === "del" + item.productId} onClick={() => handleDeleteItem(item.productId, "del" + item.productId)}>
+                    <LoadingButton loading={status === "pendingDeleteItem" + item.productId + "single"} onClick={() => dispatch(deleteItemFromCard({productId: item.productId, quantity: 1, key: "single"}))}>
                         <RemoveCircleIcon></RemoveCircleIcon>
                     </LoadingButton>
                       {item.quantity}
-                    <LoadingButton loading={status.loading && status.id === "add" + item.productId} onClick={() => handleAddItem(item.productId, "add" + item.productId)}>
+                    <LoadingButton loading={status === "pendingAddItem" + item.productId} onClick={() => dispatch(addItemToCard({productId: item.productId}))}>
                         <AddCircleIcon></AddCircleIcon>
                     </LoadingButton>
                   </TableCell>
                   <TableCell align="right">{currenyTRY.format(item.price * item.quantity)}</TableCell>
                   <TableCell align="right">
-                    <LoadingButton color="error" loading={status.loading && status.id === "del_all" + item.productId} onClick={() => {handleDeleteItem(item.productId, "del" + item.productId, item.quantity); toast.error("Ürün Sepetinizden Silinmiştir.")}}>
+                    <LoadingButton color="error" loading={status === "pendingDeleteItem" + item.productId + "all"} onClick={() => {dispatch(deleteItemFromCard({productId: item.productId, quantity: item.quantity, key: "all"})); toast.error("Ürün Sepetinizden Silinmiştir.")}}>
                        <Delete /> 
                     </LoadingButton> 
                   </TableCell>

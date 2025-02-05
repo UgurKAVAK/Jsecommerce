@@ -3,12 +3,10 @@ import { AddShoppingCart } from "@mui/icons-material";
 import SearchIcon from '@mui/icons-material/Search';
 import { IProduct } from "../../Model/IProduct";
 import { Link } from "react-router";
-import { useState } from "react";
-import request from "../../api/request";
 import { LoadingButton } from "@mui/lab";
-import { useCardContext } from "../../context/CardContext";
-import { toast } from "react-toastify";
 import { currenyTRY } from "../../utils/FormatCurrency";
+import { useAppDispatch, useAppSelector } from "../../Hooks/Hooks";
+import { addItemToCard } from "../Card/CardSlice";
 
 interface Props {
     product: IProduct
@@ -16,19 +14,8 @@ interface Props {
 
 export default function Product({product}: Props){
 
-  const[loading, setLoading] = useState(false);
-  const {setCard} = useCardContext();
-  function handleAddItem(productId: number){
-    setLoading(true);
-    request.Card.addItem(productId)
-    .then(card => {
-        setCard(card);
-        toast.success("Sepetinize Eklenmiştir.");
-    })
-    .catch(error => console.log(error))
-    .finally(() => setLoading(false));
-  }
-
+  const {status} = useAppSelector(state => state.card); 
+  const dispatch = useAppDispatch();
   const imageurl="1.jpg";
     return(
       <Card>
@@ -43,7 +30,7 @@ export default function Product({product}: Props){
         </CardContent>
         <CardActions>
           {/* <Button variant="outlined" size="small" startIcon={<AddShoppingCart/>} color="success" onClick={() => handleAddItem(product.id)}>Add To Card</Button> */}
-          <LoadingButton size="small" variant="outlined" loadingPosition="start" startIcon={<AddShoppingCart/>} loading={loading} onClick={() => handleAddItem(product.id)}>Add To Card</LoadingButton>
+          <LoadingButton size="small" variant="outlined" loadingPosition="start" startIcon={<AddShoppingCart/>} loading={status === "pendingAddItem" + product.id} onClick={() => dispatch(addItemToCard({productId: product.id}))}>Add To Card</LoadingButton>
           <Button component={Link} to={`/catalog/${product.id}`} variant="outlined" size="medium" color="primary" startIcon={<SearchIcon/>}>Search</Button>
         </CardActions>
       </Card>

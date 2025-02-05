@@ -1,10 +1,10 @@
 import { TableCell, TableRow } from "@mui/material";
-import { useCardContext } from "../../context/CardContext";
 import { currenyTRY } from "../../utils/FormatCurrency";
+import { useAppSelector } from "../../Hooks/Hooks";
 
 export default function CardSummary(){
 
-    const {card} = useCardContext();
+    const {card} = useAppSelector(state => state.card);
     const subTotal = card?.cardItems.reduce((toplam, item) => toplam + (item.quantity * item.price), 0) ?? 0;
     const tax = subTotal * 0.2;
     const total = subTotal + tax;
