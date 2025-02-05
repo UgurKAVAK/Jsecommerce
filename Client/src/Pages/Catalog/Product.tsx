@@ -6,6 +6,9 @@ import { Link } from "react-router";
 import { useState } from "react";
 import request from "../../api/request";
 import { LoadingButton } from "@mui/lab";
+import { useCardContext } from "../../context/CardContext";
+import { toast } from "react-toastify";
+import { currenyTRY } from "../../utils/FormatCurrency";
 
 interface Props {
     product: IProduct
@@ -14,10 +17,14 @@ interface Props {
 export default function Product({product}: Props){
 
   const[loading, setLoading] = useState(false);
+  const {setCard} = useCardContext();
   function handleAddItem(productId: number){
     setLoading(true);
     request.Card.addItem(productId)
-    .then(card => console.log(card))
+    .then(card => {
+        setCard(card);
+        toast.success("Sepetinize Eklenmiştir.");
+    })
     .catch(error => console.log(error))
     .finally(() => setLoading(false));
   }
@@ -31,7 +38,7 @@ export default function Product({product}: Props){
             {product.name}
           </Typography>
           <Typography variant="body2" color="secondary">
-            {(product.price / 1).toFixed(2)} ₺
+            {currenyTRY.format(product.price)}
           </Typography>
         </CardContent>
         <CardActions>
