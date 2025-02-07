@@ -1,11 +1,17 @@
 import { LockOutlined } from "@mui/icons-material";
-import { Avatar, Box, Button, Container, Paper, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Container, Paper, TextField, Typography } from "@mui/material";
 import { FieldValues, useForm } from "react-hook-form";
-import request from "../../api/request";
+import { LoadingButton } from "@mui/lab";
+import { useAppDispatch } from "../../Hooks/Hooks";
+import { loginUser } from "./AccountSlice";
+import { useNavigate } from "react-router";
 
 export default function LoginPage(){
 
-    const {register, handleSubmit} = useForm({
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
+    const {register, handleSubmit, formState: {errors, isSubmitting, isValid}} = useForm({
         defaultValues: {
             username: "",
             password: ""
@@ -13,7 +19,8 @@ export default function LoginPage(){
     });
 
     async function submitForm(data: FieldValues){
-        await request.Account.login(data);
+        await dispatch(loginUser(data))
+        navigate("/catalog")
     }
 
     return (
@@ -24,9 +31,11 @@ export default function LoginPage(){
                 </Avatar>
                 <Typography component="h1" variant="h5" sx={{textAlign: "center"}}>Login</Typography>
                 <Box component="form" onSubmit={handleSubmit(submitForm)} noValidate sx={{mt:2}}>
-                    <TextField {...register("username")} label="Enter UserName" fullWidth required autoFocus sx={{mb:2}} size="small"></TextField>
-                    <TextField {...register("password")} label="Enter Password" type="password" fullWidth required sx={{mb:2}} size="small"></TextField>
-                    <Button type="submit" variant="contained" fullWidth sx={{mt:1}}>Login</Button>
+                    <TextField {...register("username", {required: "Username İs Required", minLength:{value:4, message: "Min Length is 4 Characters"}})} label="Enter UserName" fullWidth required autoFocus sx={{mb:2}} size="small" error={!!errors.username} helperText={errors.username?.message}></TextField>
+                    {/* {errors.username?.message} bunu yazmak yerine  helperText={errors.username?.message} kullanıldı. Kütüphane ile (@mui/material)*/}
+                    <TextField {...register("password", {required: "Password İs Required", minLength:{value:8, message: "Min Length is 10 Characters"}})} label="Enter Password" type="password" fullWidth required sx={{mb:2}} size="small" error={!!errors.password} helperText={errors.password?.message}></TextField>
+                    {/* {errors.password?.message} */}
+                    <LoadingButton loading={isSubmitting} disabled={!isValid} type="submit" variant="contained" fullWidth sx={{mt:1}}>Login</LoadingButton>
                 </Box>
             </Paper>
         </Container>
