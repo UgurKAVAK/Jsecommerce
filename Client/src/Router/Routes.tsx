@@ -11,12 +11,18 @@ import NotFound from "../errors/NotFound";
 import ShoppingCardPage from "../Features/Card/ShoppingCardPage";
 import LoginPage from "../Features/Account/LoginPage";
 import RegisterPage from "../Features/Account/RegisterPage";
+import CheckoutPage from "../Features/Checkout/CheckoutPage";
+import AuthGuard from "./AuthGuard";
+import OrderList from "../Features/Orders/OrderList";
 
 export const  router = createBrowserRouter([
     {
         path: "/",
         element: <App />,
         children: [
+            {
+                element: <AuthGuard />, children: [{path: "checkout", element: <CheckoutPage/>}, {path: "orders", element: <OrderList />}]
+            },
             {path: "", element: <HomePage/>},
             {path: "about", element: <AboutPage/>},
             {path: "contact", element: <ContactPage/>},

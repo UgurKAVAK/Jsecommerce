@@ -1,8 +1,10 @@
-import { ShoppingCart } from "@mui/icons-material";
-import { AppBar, Badge, Box, Button, IconButton, Stack, Toolbar, Typography } from "@mui/material";
+import { KeyboardArrowDown, ShoppingCart } from "@mui/icons-material";
+import { AppBar, Badge, Box, Button, Container, IconButton, Menu, MenuItem, Stack, Toolbar, Typography } from "@mui/material";
 import { Link, NavLink } from "react-router";
-import { useAppDispatch, useAppSelector } from "../Hooks/Hooks";
 import { logout } from "../Features/Account/AccountSlice";
+import { useAppDispatch, useAppSelector } from "../Store/Store";
+import { clearCard } from "../Features/Card/CardSlice";
+import React, { useState } from "react";
 
 const links=[
   {title: "Home", to: "/"},
@@ -33,37 +35,53 @@ export default function Header(){
   const {user} = useAppSelector(state => state.account);
   const dispatch = useAppDispatch();
   const itemCount = card?.cardItems.reduce((total, item) => total + item.quantity, 0);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  function handleMenuClick(event: React.MouseEvent<HTMLButtonElement>){
+    setAnchorEl(event.currentTarget);
+  }
+
+  function handleClose(){
+    setAnchorEl(null);
+  }
 
     return(
       <AppBar position="static" sx={{mb:4}}>
-        <Toolbar sx={{ display:"flex", justifyContent:"space-between"}}>
-          <Box sx={{display:"flex", alignItems:"center"}}>
-            <Typography variant="h6">E-Commerce</Typography>
-            <Stack direction="row">
-              {links.map(links => <Button key={links.to} component={NavLink} to={links.to} sx={navStyles}>{links.title}</Button>)}
-            </Stack>
-          </Box>
-          <Box sx={{display:"flex", alignItems:"center"}}>
-            <IconButton component={Link} to="/card" size="large" edge="start" color="inherit">
-              <Badge badgeContent={itemCount} color="secondary">
-                <ShoppingCart />
-              </Badge>
-            </IconButton>
+        <Container maxWidth="lg">
+          <Toolbar disableGutters sx={{ display:"flex", justifyContent:"space-between"}}>
+            <Box sx={{display:"flex", alignItems:"center"}}>
+              <Stack direction="row">
+                {links.map(links => <Button key={links.to} component={NavLink} to={links.to} sx={navStyles}>{links.title}</Button>)}
+              </Stack>
+            </Box>
+            <Box sx={{display:"flex", alignItems:"center"}}>
+              <IconButton component={Link} to="/card" size="large" edge="start" color="inherit">
+                <Badge badgeContent={itemCount} color="secondary">
+                  <ShoppingCart />
+                </Badge>
+              </IconButton>
 
-            {
-              user ? (
-                <Stack direction="row">
-                  <Button sx={navStyles}>{user.name}</Button>
-                  <Button sx={navStyles} onClick={() => dispatch(logout())}>Log Out</Button>
-                </Stack>
-              ): (
-                <Stack direction="row">
-                  {authLinks.map(links => <Button key={links.to} component={NavLink} to={links.to} sx={navStyles}>{links.title}</Button>)}
-                </Stack>
-              )
-            }
-          </Box>
-        </Toolbar>
+              {
+                user ? (
+                  <>
+                    <Button id="user-button" onClick={handleMenuClick} endIcon={<KeyboardArrowDown />} sx={navStyles}>{user.name}</Button>
+
+                    <Menu id="user-menu" anchorEl={anchorEl} open={open} onClose={handleClose}>
+                      <MenuItem component={Link} to="/orders">Orders</MenuItem>
+                      <MenuItem onClick={() => {dispatch(logout()), dispatch(clearCard())}}>Logout</MenuItem>
+                    </Menu>
+
+                  </>
+                ): (
+                  <Stack direction="row">
+                    {authLinks.map(links => <Button key={links.to} component={NavLink} to={links.to} sx={navStyles}>{links.title}</Button>)}
+                  </Stack>
+                )
+              }
+            </Box>
+          </Toolbar>
+        </Container>
       </AppBar>
     );
   }

@@ -1,9 +1,18 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 import { router } from "../Router/Routes";
+import { Store } from "../Store/Store";
 
 axios.defaults.baseURL ="http://localhost:5206/api/";
 axios.defaults.withCredentials = true;
+
+axios.interceptors.request.use(request => {
+    const token = Store.getState().account.user?.token;
+    if (token) {
+        request.headers.Authorization = `Bearer ${token}`; 
+    }
+    return request;
+})
 
 axios.interceptors.response.use(response => {
     return response;
@@ -66,10 +75,17 @@ const Card = {
 const Account = {
     login: (formData: any) => queries.post("account/login", formData),
     register: (formData: any) => queries.post("account/register", formData),
+    getUser: () => queries.get("account/getuser")
+}
+
+const Order = {
+    getOrders: () => queries.get("orders"),
+    getOrder: (id: number) => queries.get(`orders/${id}`),
+    createOrder: (formData: any) => queries.post("orders", formData)
 }
 
 const request = {
-    Catalog, Errors, Card, Account
+    Catalog, Errors, Card, Account, Order
 }
 
 export default request

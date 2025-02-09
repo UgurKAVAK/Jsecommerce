@@ -1,6 +1,6 @@
 import { TableCell, TableRow } from "@mui/material";
 import { currenyTRY } from "../../utils/FormatCurrency";
-import { useAppSelector } from "../../Hooks/Hooks";
+import { useAppSelector } from "../../Store/Store";
 
 export default function CardSummary(){
 
@@ -12,15 +12,15 @@ export default function CardSummary(){
     return (
         <>
         <TableRow>
-            <TableCell align="right" colSpan={4}>Ara Toplam</TableCell>
+            <TableCell align="right" colSpan={4}>Sub Total</TableCell>
             <TableCell align="right">{currenyTRY.format(subTotal)}</TableCell>
         </TableRow> 
         <TableRow>
-            <TableCell align="right" colSpan={4}>KDV (%20)</TableCell>
+            <TableCell align="right" colSpan={4}>VAT (%20)</TableCell>
             <TableCell align="right">{currenyTRY.format(tax)}</TableCell>
         </TableRow> 
         <TableRow>
-            <TableCell align="right" colSpan={4}>Toplam Ödenecek Fiyat</TableCell>
+            <TableCell align="right" colSpan={4}>Total Price Paid</TableCell>
             <TableCell align="right">{currenyTRY.format(total)}</TableCell>
         </TableRow> 
        </>

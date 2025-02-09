@@ -34,12 +34,28 @@ export const deleteItemFromCard = createAsyncThunk<Card, {productId: number, qua
     }
 );
 
+export const getCard = createAsyncThunk<Card>(
+    "card/getcard",
+    async (_, thunkAPI) => {
+        try {
+            return await request.Card.get();
+        } catch (error: any) {
+            {
+                return thunkAPI.rejectWithValue({error: error.data});
+            }
+        }
+    }
+)
+
 export const cardSlice = createSlice({
     name: "card",
     initialState,
     reducers: {
         setCard: (state, action) => {
             state.card = action.payload
+        },
+        clearCard: (state) => {
+            state.card = null;
         }
     },
     extraReducers: (builder) => {
@@ -66,7 +82,13 @@ export const cardSlice = createSlice({
         builder.addCase(deleteItemFromCard.rejected, (state) => {
             state.status = "idle";
         });
+        builder.addCase(getCard.fulfilled, (state, action) => {
+            state.card = action.payload;
+        });
+        builder.addCase(getCard.rejected, (_, action) => {
+            console.log(action.payload);
+        });
     }
 });
 
-export const {setCard} = cardSlice.actions
+export const {setCard, clearCard} = cardSlice.actions

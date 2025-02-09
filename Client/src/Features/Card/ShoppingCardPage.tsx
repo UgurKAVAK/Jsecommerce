@@ -1,4 +1,4 @@
-import { Alert, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Alert, Box, Button, Link, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
@@ -6,17 +6,18 @@ import { LoadingButton } from "@mui/lab";
 import { toast } from "react-toastify";
 import CardSummary from "./CardSummary";
 import { currenyTRY } from "../../utils/FormatCurrency";
-import { useAppDispatch, useAppSelector } from "../../Hooks/Hooks";
 import { addItemToCard, deleteItemFromCard } from "./CardSlice";
+import { useAppDispatch, useAppSelector } from "../../Store/Store";
 
 export default function ShoppingCardPage(){
     
     const {card, status} = useAppSelector(state => state.card);
     const dispatch = useAppDispatch();
     
-    if(card?.cardItems.length === 0) return <Alert severity="warning">Sepetinizde Ürün Yoktur.</Alert>
+    if( !card || card?.cardItems.length === 0) return <Alert severity="warning">Sepetinizde Ürün Yoktur.</Alert>
 
     return (
+      <>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
@@ -63,5 +64,9 @@ export default function ShoppingCardPage(){
             </TableBody>
           </Table>
         </TableContainer>
+        <Box display="flex" justifyContent="flex-end" sx={{mt: 3}}>
+          <Button component={Link} href="/checkout" variant="contained" color="primary">Checkout</Button>
+        </Box>
+      </>
       );
 }

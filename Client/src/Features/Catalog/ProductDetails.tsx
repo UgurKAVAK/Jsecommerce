@@ -5,9 +5,9 @@ import NotFound from "../../errors/NotFound";
 import { LoadingButton } from "@mui/lab";
 import { AddShoppingCart } from "@mui/icons-material";
 import { currenyTRY } from "../../utils/FormatCurrency";
-import { useAppDispatch, useAppSelector } from "../../Hooks/Hooks";
 import { addItemToCard } from "../Card/CardSlice";
 import { fetchProductsById, selectProductById } from "./CatalogSlice";
+import { useAppDispatch, useAppSelector } from "../../Store/Store";
 
 export default function ProductDetailsPage(){
 
